@@ -1,0 +1,64 @@
+{
+    "schemaVersion": 1,
+
+    "id": "spyglassplus",
+    "version": "${version}",
+    "license": [
+        "MIT (Code)",
+        "All Rights Reserved (Assets)"
+    ],
+
+    "name": "Spyglass+",
+    "description": "A mod to improve the Spyglass experience",
+    "icon": "assets/spyglassplus/icon.png",
+
+    "authors": [
+        "Team Fusion"
+    ],
+    "contributors": [
+        "Andante"
+    ],
+
+    "contact": {
+        "homepage": "https://github.com/teamfusion/spyglassplus",
+        "sources": "https://github.com/teamfusion/spyglassplus",
+        "issues": "https://github.com/teamfusion/spyglassplus/issues"
+    },
+
+    "environment": "*",
+    "entrypoints": {
+        "main": [
+            {
+                "value": "com.teamfusion.spyglassplus.SpyglassPlus",
+                "adapter": "kotlin"
+            }
+        ],
+        "client": [
+            {
+                "value": "com.teamfusion.spyglassplus.SpyglassPlusClient",
+                "adapter": "kotlin"
+            }
+        ],
+        "fabric-datagen": [
+            {
+                "value": "com.teamfusion.spyglassplus.SpyglassPlusDataGenerator",
+                "adapter": "kotlin"
+            }
+        ]
+    },
+    "mixins": [
+        "spyglassplus.mixins.json",
+        {
+            "config": "spyglassplus.client.mixins.json",
+            "environment": "client"
+        }
+    ],
+
+    "depends": {
+        "fabricloader": ">=0.14.24",
+        "minecraft": "~1.20.2",
+        "java": ">=17",
+        "fabric-api": "*",
+        "fabric-language-kotlin": ">=1.9.20"
+    }
+}
