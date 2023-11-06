@@ -1,4 +1,4 @@
-package com.teamfusion.spyglassplus
+package com.teamfusion.spyglassplus.client
 
 import net.fabricmc.api.ClientModInitializer
 

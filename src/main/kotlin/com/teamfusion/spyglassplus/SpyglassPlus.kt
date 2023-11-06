@@ -1,5 +1,8 @@
 package com.teamfusion.spyglassplus
 
+import com.teamfusion.spyglassplus.enchantment.SpyglassPlusEnchantments
+import com.teamfusion.spyglassplus.item.SpyglassPlusItemGroups
+import com.teamfusion.spyglassplus.item.SpyglassPlusItems
 import net.fabricmc.api.ModInitializer
 import org.slf4j.LoggerFactory
 
@@ -11,5 +14,9 @@ object SpyglassPlus : ModInitializer {
 
     override fun onInitialize() {
         logger.info("Initializing $MOD_NAME")
+
+        SpyglassPlusItems
+        SpyglassPlusItemGroups
+        SpyglassPlusEnchantments
     }
 }

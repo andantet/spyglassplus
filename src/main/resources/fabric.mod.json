@@ -35,13 +35,19 @@
         ],
         "client": [
             {
-                "value": "com.teamfusion.spyglassplus.SpyglassPlusClient",
+                "value": "com.teamfusion.spyglassplus.client.SpyglassPlusClient",
+                "adapter": "kotlin"
+            }
+        ],
+        "mm:early_risers": [
+            {
+                "value": "com.teamfusion.spyglassplus.asm.SpyglassPlusASM",
                 "adapter": "kotlin"
             }
         ],
         "fabric-datagen": [
             {
-                "value": "com.teamfusion.spyglassplus.SpyglassPlusDataGenerator",
+                "value": "com.teamfusion.spyglassplus.data.SpyglassPlusDataGenerator",
                 "adapter": "kotlin"
             }
         ]
