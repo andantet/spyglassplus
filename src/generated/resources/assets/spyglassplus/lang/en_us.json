@@ -4,5 +4,6 @@
   "enchantment.spyglassplus.illuminate": "Illuminate",
   "enchantment.spyglassplus.indicate": "Indicate",
   "enchantment.spyglassplus.scrutiny": "Scrutiny",
+  "item.minecraft.spyglass.spyglassplus.tooltip.scrutiny": "Zoomed: %sx",
   "itemGroup.spyglassplus.all": "Spyglass+"
 }

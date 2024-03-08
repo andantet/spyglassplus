@@ -2,9 +2,11 @@ package com.teamfusion.spyglassplus.client
 
 import com.teamfusion.spyglassplus.client.event.ClientMouseScrollCallback
 import com.teamfusion.spyglassplus.client.event.ClientWorldBrightnessCallback
-import com.teamfusion.spyglassplus.client.handler.IlluminateBrightnessHandler
-import com.teamfusion.spyglassplus.client.handler.ScrutinyScrollHandler
+import com.teamfusion.spyglassplus.client.event.FovMultiplierUpdateCallback
+import com.teamfusion.spyglassplus.client.handler.ClientIlluminateBrightnessHandler
+import com.teamfusion.spyglassplus.client.handler.ClientScrutinyHandler
 import net.fabricmc.api.ClientModInitializer
+import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.network.ClientPlayerEntity
 import net.minecraft.client.option.Perspective
@@ -17,8 +19,12 @@ object SpyglassPlusClient : ClientModInitializer {
     }
 
     private fun registerEvents() {
-        ClientMouseScrollCallback.EVENT.register(ScrutinyScrollHandler())
-        ClientWorldBrightnessCallback.EVENT.register(IlluminateBrightnessHandler())
+        val scrutinyHandler = ClientScrutinyHandler()
+        ClientMouseScrollCallback.EVENT.register(scrutinyHandler)
+        FovMultiplierUpdateCallback.EVENT.register(scrutinyHandler)
+        ItemTooltipCallback.EVENT.register(scrutinyHandler)
+
+        ClientWorldBrightnessCallback.EVENT.register(ClientIlluminateBrightnessHandler())
     }
 
     fun getActiveSpyglassItemStack(client: MinecraftClient, player: ClientPlayerEntity): ItemStack? {

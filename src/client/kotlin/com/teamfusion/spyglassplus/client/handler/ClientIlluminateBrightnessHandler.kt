@@ -15,7 +15,7 @@ import kotlin.math.min
 /**
  * Handles world brightness for the illuminate enchantment.
  */
-class IlluminateBrightnessHandler : ClientWorldBrightnessCallback {
+class ClientIlluminateBrightnessHandler : ClientWorldBrightnessCallback {
     /**
      * When the spyglass opened.
      */
