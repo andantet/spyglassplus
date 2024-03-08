@@ -18,5 +18,11 @@ object SpyglassPlus : ModInitializer {
         SpyglassPlusItems
         SpyglassPlusItemGroups
         SpyglassPlusEnchantments
+
+        registerEvents()
+    }
+
+    private fun registerEvents() {
+        //
     }
 }
