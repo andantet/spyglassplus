@@ -34,15 +34,14 @@ class ClientScrutinyHandler : ClientMouseScrollCallback, FovMultiplierUpdateCall
 
         val stack = getActiveSpyglassItemStack(client, player) ?: return EventResult.PASS
 
-        onSpyglassScroll(delta, stack)
-        return EventResult.CANCEL
+        return if (onSpyglassScroll(delta, stack)) EventResult.CANCEL else EventResult.PASS
     }
 
-    private fun onSpyglassScroll(scrutinyDelta: Double, stack: ItemStack) {
+    private fun onSpyglassScroll(scrutinyDelta: Double, stack: ItemStack): Boolean {
         // check for scrutiny
         val level = EnchantmentHelper.getLevel(SpyglassPlusEnchantments.SCRUTINY, stack)
         if (level < 1) {
-            return
+            return false
         }
 
         // get scrutiny
@@ -54,6 +53,7 @@ class ClientScrutinyHandler : ClientMouseScrollCallback, FovMultiplierUpdateCall
         // update
         nbt.putInt(SCRUTINY_KEY, clampedScrutiny)
         ClientPlayNetworking.send(C2SScrutinyUpdatePacket(clampedScrutiny))
+        return true
     }
 
     override fun getMultiplier(
