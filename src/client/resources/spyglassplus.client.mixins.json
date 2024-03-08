@@ -5,6 +5,7 @@
     "client": [
         "GameRendererMixin",
         "LightmapTextureManagerMixin",
+        "MinecraftClientMixin",
         "MouseMixin"
     ],
     "injectors": {
