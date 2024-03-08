@@ -1,9 +1,9 @@
 package com.teamfusion.spyglassplus.mixin.client;
 
 import com.teamfusion.spyglassplus.client.event.ClientMouseScrollCallback;
+import com.teamfusion.spyglassplus.event.EventResult;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.Mouse;
-import net.minecraft.util.ActionResult;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -27,8 +27,8 @@ public class MouseMixin {
             cancellable = true
     )
     private void onOnMouseScroll(long window, double horizontal, double vertical, CallbackInfo ci) {
-        ActionResult result = ClientMouseScrollCallback.Companion.getEVENT().invoker().onMouseScroll(this.client, this.client.player, this.eventDeltaWheel);
-        if (!result.isAccepted() && result != ActionResult.PASS) {
+        EventResult result = ClientMouseScrollCallback.Companion.getEVENT().invoker().onMouseScroll(this.client, this.client.player, this.eventDeltaWheel);
+        if (result == EventResult.CANCEL) {
             ci.cancel();
             this.eventDeltaWheel = 0;
         }
