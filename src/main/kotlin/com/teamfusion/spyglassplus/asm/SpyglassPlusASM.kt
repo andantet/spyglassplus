@@ -6,11 +6,11 @@ import net.fabricmc.loader.api.FabricLoader
 class SpyglassPlusASM : Runnable {
     override fun run() {
         // register custom enchantment targets
-        ClassTinkerers.enumBuilder(getIntermediaryClass("net.minecraft.class_1886"), *emptyArray<String>())
+        ClassTinkerers.enumBuilder(getIntermediaryClass("net.minecraft.class_1886"))
             .addEnumSubclass(
                 "SCOPING",
                 "com.teamfusion.spyglassplus.enchantment.target.ScopingEnchantmentTarget"
-            ).build();
+            ).build()
     }
 
     private fun getIntermediaryClass(path: String): String {

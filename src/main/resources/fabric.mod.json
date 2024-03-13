@@ -59,6 +59,7 @@
             "environment": "client"
         }
     ],
+    "accessWidener": "spyglassplus.accesswidener",
 
     "depends": {
         "fabricloader": ">=0.15",
