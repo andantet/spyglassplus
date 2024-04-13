@@ -1,6 +1,7 @@
 package com.teamfusion.spyglassplus
 
 import com.teamfusion.spyglassplus.enchantment.SpyglassPlusEnchantments
+import com.teamfusion.spyglassplus.entity.SpyglassPlusEntityTypes
 import com.teamfusion.spyglassplus.event.IndicateHandler
 import com.teamfusion.spyglassplus.event.ItemUsageCallback
 import com.teamfusion.spyglassplus.handler.ScrutinyScrollHandler
@@ -23,6 +24,7 @@ object SpyglassPlus : ModInitializer {
         logger.info("Initializing $MOD_NAME")
 
         SpyglassPlusItems
+        SpyglassPlusEntityTypes
         SpyglassPlusItemGroups
         SpyglassPlusEnchantments
         SpyglassPlusEntityTypeTags
