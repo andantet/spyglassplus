@@ -6,10 +6,13 @@ import com.teamfusion.spyglassplus.client.event.FovMultiplierUpdateCallback
 import com.teamfusion.spyglassplus.client.handler.ClientIlluminateBrightnessHandler
 import com.teamfusion.spyglassplus.client.handler.ClientIndicateHandler
 import com.teamfusion.spyglassplus.client.handler.ClientScrutinyHandler
+import com.teamfusion.spyglassplus.client.render.entity.SpyglassStandEntityRenderer
+import com.teamfusion.spyglassplus.entity.SpyglassPlusEntityTypes
 import com.teamfusion.spyglassplus.networking.SpyglassPlusPacketTypes
 import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking
+import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.network.ClientPlayerEntity
 import net.minecraft.client.option.Perspective
@@ -19,6 +22,7 @@ import net.minecraft.item.SpyglassItem
 object SpyglassPlusClient : ClientModInitializer {
     override fun onInitializeClient() {
         registerEvents()
+        registerEntityRenderers()
     }
 
     private fun registerEvents() {
@@ -31,6 +35,10 @@ object SpyglassPlusClient : ClientModInitializer {
 
         ClientPlayNetworking.registerGlobalReceiver(SpyglassPlusPacketTypes.S2C_ENABLE_INDICATE_GLOWING, ClientIndicateHandler.Enable())
         ClientPlayNetworking.registerGlobalReceiver(SpyglassPlusPacketTypes.S2C_DISABLE_INDICATE_GLOWING, ClientIndicateHandler.Disable())
+    }
+
+    private fun registerEntityRenderers() {
+        EntityRendererRegistry.register(SpyglassPlusEntityTypes.SPYGLASS_STAND, ::SpyglassStandEntityRenderer)
     }
 
     fun getActiveSpyglassItemStack(client: MinecraftClient, player: ClientPlayerEntity): ItemStack? {
