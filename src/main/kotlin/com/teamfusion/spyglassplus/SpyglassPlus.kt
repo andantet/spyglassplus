@@ -8,6 +8,7 @@ import com.teamfusion.spyglassplus.handler.ScrutinyScrollHandler
 import com.teamfusion.spyglassplus.item.SpyglassPlusItemGroups
 import com.teamfusion.spyglassplus.item.SpyglassPlusItems
 import com.teamfusion.spyglassplus.networking.SpyglassPlusPacketTypes
+import com.teamfusion.spyglassplus.sound.SpyglassPlusSoundEvents
 import com.teamfusion.spyglassplus.tag.SpyglassPlusEntityTypeTags
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
@@ -28,6 +29,7 @@ object SpyglassPlus : ModInitializer {
         SpyglassPlusItemGroups
         SpyglassPlusEnchantments
         SpyglassPlusEntityTypeTags
+        SpyglassPlusSoundEvents
 
         registerEvents()
     }

@@ -24,6 +24,7 @@ object SpyglassPlusItemGroups {
             .icon { ItemStack(Items.SPYGLASS) }
             .entries { _, entries ->
                 entries.add(Items.SPYGLASS)
+                entries.add(SpyglassPlusItems.SPYGLASS_STAND)
 
                 Registries.ENCHANTMENT.forEach { enchantment ->
                     if (enchantment.target == ScopingEnchantmentTarget.INSTANCE) {

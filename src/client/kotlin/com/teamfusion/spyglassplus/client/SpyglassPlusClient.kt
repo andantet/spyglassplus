@@ -7,6 +7,7 @@ import com.teamfusion.spyglassplus.client.handler.ClientIlluminateBrightnessHand
 import com.teamfusion.spyglassplus.client.handler.ClientIndicateHandler
 import com.teamfusion.spyglassplus.client.handler.ClientScrutinyHandler
 import com.teamfusion.spyglassplus.client.render.entity.SpyglassStandEntityRenderer
+import com.teamfusion.spyglassplus.client.render.model.SpyglassPlusEntityModelLayers
 import com.teamfusion.spyglassplus.entity.SpyglassPlusEntityTypes
 import com.teamfusion.spyglassplus.networking.SpyglassPlusPacketTypes
 import net.fabricmc.api.ClientModInitializer
@@ -21,6 +22,8 @@ import net.minecraft.item.SpyglassItem
 
 object SpyglassPlusClient : ClientModInitializer {
     override fun onInitializeClient() {
+        SpyglassPlusEntityModelLayers
+
         registerEvents()
         registerEntityRenderers()
     }
