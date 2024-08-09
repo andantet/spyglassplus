@@ -36,8 +36,8 @@ class SpyglassStandEntityModel(private val root: ModelPart) : SinglePartEntityMo
     override fun animateModel(entity: SpyglassStandEntity, limbAngle: Float, limbDistance: Float, tickDelta: Float) {
         val yaw = if (tickDelta == 1.0f) entity.yaw else MathHelper.lerp(tickDelta, entity.prevYaw, entity.yaw)
         this.tripod.yaw = yaw * DEGREES_TO_RADIANS;
-        this.holder.yaw = entity.getInterpolatedSpyglassYaw(tickDelta) * DEGREES_TO_RADIANS;
-        this.spyglass.pitch = entity.getInterpolatedSpyglassPitch(tickDelta) * DEGREES_TO_RADIANS;
+        this.holder.yaw = entity.getYaw(tickDelta) * DEGREES_TO_RADIANS;
+        this.spyglass.pitch = entity.getPitch(tickDelta) * DEGREES_TO_RADIANS;
     }
 
     override fun getPart(): ModelPart {

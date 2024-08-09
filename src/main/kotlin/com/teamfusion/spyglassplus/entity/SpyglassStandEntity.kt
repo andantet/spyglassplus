@@ -17,8 +17,6 @@ import net.minecraft.nbt.NbtCompound
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.ActionResult
 import net.minecraft.util.Hand
-import net.minecraft.util.math.MathHelper.lerp
-import net.minecraft.util.math.MathHelper.wrapDegrees
 import net.minecraft.world.World
 import java.util.Optional
 import java.util.UUID
@@ -38,18 +36,6 @@ class SpyglassStandEntity(type: EntityType<out SpyglassStandEntity>, world: Worl
         get() = dataTracker.get(SPYGLASS_STACK)
         set(value) = dataTracker.set(SPYGLASS_STACK, value)
 
-    var spyglassYaw: Float
-        get() = dataTracker.get(SPYGLASS_YAW)
-        set(value) = dataTracker.set(SPYGLASS_YAW, wrapDegrees(value))
-
-    var spyglassPitch: Float
-        get() = dataTracker.get(SPYGLASS_PITCH)
-        set(value) = dataTracker.set(SPYGLASS_PITCH, wrapDegrees(value))
-
-    var prevSpyglassYaw: Float = 0.0f
-
-    var prevSpyglassPitch: Float = 0.0f
-
     constructor(world: World, x: Double, y: Double, z: Double) : this(SpyglassPlusEntityTypes.SPYGLASS_STAND, world) {
         setPosition(x, y, z)
     }
@@ -61,16 +47,17 @@ class SpyglassStandEntity(type: EntityType<out SpyglassStandEntity>, world: Worl
 
         dataTracker.startTracking(USER, Optional.empty())
         dataTracker.startTracking(SPYGLASS_STACK, ItemStack.EMPTY)
-        dataTracker.startTracking(SPYGLASS_YAW, prevSpyglassYaw)
-        dataTracker.startTracking(SPYGLASS_PITCH, prevSpyglassPitch)
     }
 
     override fun tick() {
         super.tick()
 
-        user?.also { user ->
+        val user = user
+        if (user != null) {
             val player = world.getPlayerByUuid(user)
             tickUser(player)
+        } else {
+            headYaw = yaw
         }
     }
 
@@ -99,18 +86,8 @@ class SpyglassStandEntity(type: EntityType<out SpyglassStandEntity>, world: Worl
         player.pitch = newPitch
         player.yaw = newYaw
 
-        spyglassPitch = newPitch
-        spyglassYaw = newYaw
-
         pitch = newPitch
         headYaw = newYaw
-    }
-
-    override fun tickMovement() {
-        prevSpyglassYaw = spyglassYaw
-        prevSpyglassPitch = spyglassPitch
-
-        super.tickMovement()
     }
 
     override fun interact(player: PlayerEntity, hand: Hand): ActionResult {
@@ -156,11 +133,11 @@ class SpyglassStandEntity(type: EntityType<out SpyglassStandEntity>, world: Worl
         val playerUuid = player.uuid
         user = playerUuid
 
-        spyglassYaw = yaw
-        spyglassPitch = 0.0f
+        headYaw = yaw
+        pitch = 0.0f
 
-        player.yaw = spyglassYaw
-        player.pitch = spyglassPitch
+        player.yaw = yaw
+        player.pitch = pitch
 
         if (player is ServerPlayerEntity) {
             player.cameraEntity = this
@@ -180,11 +157,11 @@ class SpyglassStandEntity(type: EntityType<out SpyglassStandEntity>, world: Worl
             player.cameraEntity = null
         }
 
-        spyglassYaw = yaw
-        spyglassPitch = 0.0f
+        headYaw = yaw
+        pitch = 0.0f
 
         player.yaw = yaw
-        player.pitch = 0.0f
+        player.pitch = pitch
 
         return true
     }
@@ -219,14 +196,6 @@ class SpyglassStandEntity(type: EntityType<out SpyglassStandEntity>, world: Worl
         }
     }
 
-    fun getInterpolatedSpyglassYaw(tickDelta: Float): Float {
-        return lerp(tickDelta, prevSpyglassYaw, spyglassYaw)
-    }
-
-    fun getInterpolatedSpyglassPitch(tickDelta: Float): Float {
-        return lerp(tickDelta, prevSpyglassPitch, spyglassPitch)
-    }
-
     override fun writeCustomDataToNbt(nbt: NbtCompound) {
         super.writeCustomDataToNbt(nbt)
 
@@ -234,8 +203,6 @@ class SpyglassStandEntity(type: EntityType<out SpyglassStandEntity>, world: Worl
 
         user?.let { user -> nbt.putUuid(USER_KEY, user) }
         nbt.put(SPYGLASS_STACK_KEY, spyglassStack.writeNbt(NbtCompound()))
-        nbt.putFloat(SPYGLASS_YAW_KEY, spyglassYaw)
-        nbt.putFloat(SPYGLASS_PITCH_KEY, spyglassPitch)
     }
 
     override fun readCustomDataFromNbt(nbt: NbtCompound) {
@@ -249,8 +216,6 @@ class SpyglassStandEntity(type: EntityType<out SpyglassStandEntity>, world: Worl
         }
 
         spyglassStack = ItemStack.fromNbt(nbt.getCompound(SPYGLASS_STACK_KEY))
-        spyglassYaw = nbt.getFloat(SPYGLASS_YAW_KEY)
-        spyglassPitch = nbt.getFloat(SPYGLASS_PITCH_KEY)
     }
 
     companion object {
@@ -258,8 +223,6 @@ class SpyglassStandEntity(type: EntityType<out SpyglassStandEntity>, world: Worl
 
         const val USER_KEY = "user"
         const val SPYGLASS_STACK_KEY = "spyglass_stack"
-        const val SPYGLASS_YAW_KEY = "spyglass_yaw"
-        const val SPYGLASS_PITCH_KEY = "spyglass_pitch"
 
         val SMALL: TrackedData<Boolean> = registerDataTracker(TrackedDataHandlerRegistry.BOOLEAN)
 
