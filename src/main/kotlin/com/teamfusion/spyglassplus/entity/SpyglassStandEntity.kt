@@ -1,6 +1,7 @@
 package com.teamfusion.spyglassplus.entity
 
 import com.teamfusion.spyglassplus.item.SpyglassPlusItems
+import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.entity.EntityDimensions
 import net.minecraft.entity.EntityPose
 import net.minecraft.entity.EntityType
@@ -9,12 +10,20 @@ import net.minecraft.entity.data.DataTracker
 import net.minecraft.entity.data.TrackedData
 import net.minecraft.entity.data.TrackedDataHandler
 import net.minecraft.entity.data.TrackedDataHandlerRegistry
+import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
+import net.minecraft.item.SpyglassItem
 import net.minecraft.nbt.NbtCompound
+import net.minecraft.server.network.ServerPlayerEntity
+import net.minecraft.util.ActionResult
+import net.minecraft.util.Hand
 import net.minecraft.util.math.MathHelper.lerp
+import net.minecraft.util.math.MathHelper.wrapDegrees
 import net.minecraft.world.World
 import java.util.Optional
 import java.util.UUID
+import kotlin.math.max
+import kotlin.math.min
 
 class SpyglassStandEntity(type: EntityType<out SpyglassStandEntity>, world: World) : StandEntity(type, world) {
     var small: Boolean
@@ -31,11 +40,11 @@ class SpyglassStandEntity(type: EntityType<out SpyglassStandEntity>, world: Worl
 
     var spyglassYaw: Float
         get() = dataTracker.get(SPYGLASS_YAW)
-        set(value) = dataTracker.set(SPYGLASS_YAW, value)
+        set(value) = dataTracker.set(SPYGLASS_YAW, wrapDegrees(value))
 
     var spyglassPitch: Float
         get() = dataTracker.get(SPYGLASS_PITCH)
-        set(value) = dataTracker.set(SPYGLASS_PITCH, value)
+        set(value) = dataTracker.set(SPYGLASS_PITCH, wrapDegrees(value))
 
     var prevSpyglassYaw: Float = 0.0f
 
@@ -56,15 +65,45 @@ class SpyglassStandEntity(type: EntityType<out SpyglassStandEntity>, world: Worl
         dataTracker.startTracking(SPYGLASS_PITCH, prevSpyglassPitch)
     }
 
-    override fun asItemStack(): ItemStack {
-        val stack = ItemStack(SpyglassPlusItems.SPYGLASS_STAND)
+    override fun tick() {
+        super.tick()
 
-        if (small) {
-            val nbtEntityTag = stack.getOrCreateSubNbt(EntityType.ENTITY_TAG_KEY)
-            nbtEntityTag.putBoolean(SMALL_KEY, true)
+        user?.also { user ->
+            val player = world.getPlayerByUuid(user)
+            tickUser(player)
+        }
+    }
+
+    private fun tickUser(player: PlayerEntity?) {
+        // player not found
+        if (player == null) {
+            unscopeSpyglass()
+            return
         }
 
-        return stack
+        // not true user
+        if (player is ServerPlayerEntity && player.cameraEntity != this) {
+            if (unscopeSpyglass()) {
+                return
+            }
+        }
+
+        // tick real player
+        val playerPitch = player.pitch
+        val playerYaw = player.yaw
+
+        val diff = 70.0f
+        val newPitch = max(-diff, min(diff, playerPitch))
+        val newYaw = max(yaw - diff, min(yaw + diff, playerYaw))
+
+        player.pitch = newPitch
+        player.yaw = newYaw
+
+        spyglassPitch = newPitch
+        spyglassYaw = newYaw
+
+        pitch = newPitch
+        headYaw = newYaw
     }
 
     override fun tickMovement() {
@@ -74,6 +113,82 @@ class SpyglassStandEntity(type: EntityType<out SpyglassStandEntity>, world: Worl
         super.tickMovement()
     }
 
+    override fun interact(player: PlayerEntity, hand: Hand): ActionResult {
+        val stack = player.getStackInHand(hand)
+
+        if (hasSpyglassStack()) {
+            if (user == null) {
+                // try remove spyglass stack
+                if (player.shouldCancelInteraction()) {
+                    player.giveItemStack(spyglassStack)
+                    spyglassStack = ItemStack.EMPTY
+                    return ActionResult.SUCCESS
+                } else {
+                    if (scopeSpyglass(player)) {
+                        return ActionResult.SUCCESS
+                    }
+                }
+            }
+        } else {
+            // equip spyglass stack
+            if (stack.item is SpyglassItem) {
+                spyglassStack = stack.copy()
+                stack.decrement(1)
+                return ActionResult.SUCCESS
+            }
+        }
+
+        return super.interact(player, hand)
+    }
+
+    fun scopeSpyglass(player: PlayerEntity): Boolean {
+        // suspend to development
+        if (!FabricLoader.getInstance().isDevelopmentEnvironment) {
+            return false
+        }
+
+        // check for active user
+        if (user != null) {
+            return false
+        }
+
+        // scope
+        val playerUuid = player.uuid
+        user = playerUuid
+
+        spyglassYaw = yaw
+        spyglassPitch = 0.0f
+
+        player.yaw = spyglassYaw
+        player.pitch = spyglassPitch
+
+        if (player is ServerPlayerEntity) {
+            player.cameraEntity = this
+        }
+
+        return true
+    }
+
+    fun unscopeSpyglass(): Boolean {
+        // verify player
+        val player = user?.let(world::getPlayerByUuid) ?: return false
+
+        // unscope
+        user = null
+
+        if (player is ServerPlayerEntity && player.cameraEntity == this) {
+            player.cameraEntity = null
+        }
+
+        spyglassYaw = yaw
+        spyglassPitch = 0.0f
+
+        player.yaw = yaw
+        player.pitch = 0.0f
+
+        return true
+    }
+
     override fun dropInventory() {
         super.dropInventory()
         dropStack(spyglassStack)
@@ -81,6 +196,17 @@ class SpyglassStandEntity(type: EntityType<out SpyglassStandEntity>, world: Worl
 
     fun hasSpyglassStack(): Boolean {
         return !spyglassStack.isEmpty
+    }
+
+    override fun asItemStack(): ItemStack {
+        val stack = ItemStack(SpyglassPlusItems.SPYGLASS_STAND)
+
+        if (small) {
+            val nbtEntityTag = stack.getOrCreateSubNbt(EntityType.ENTITY_TAG_KEY)
+            nbtEntityTag.putBoolean(SMALL_KEY, true)
+        }
+
+        return stack
     }
 
     override fun isBaby(): Boolean {
