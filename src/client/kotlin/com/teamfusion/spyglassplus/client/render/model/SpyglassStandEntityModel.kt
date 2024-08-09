@@ -11,6 +11,7 @@ import net.minecraft.client.model.TexturedModelData
 import net.minecraft.client.render.entity.model.EntityModelPartNames.LEFT_LEG
 import net.minecraft.client.render.entity.model.EntityModelPartNames.RIGHT_LEG
 import net.minecraft.client.render.entity.model.SinglePartEntityModel
+import net.minecraft.util.math.MathHelper
 
 class SpyglassStandEntityModel(private val root: ModelPart) : SinglePartEntityModel<SpyglassStandEntity>() {
     private val holder: ModelPart = root.getChild(HOLDER)
@@ -33,7 +34,8 @@ class SpyglassStandEntityModel(private val root: ModelPart) : SinglePartEntityMo
     }
 
     override fun animateModel(entity: SpyglassStandEntity, limbAngle: Float, limbDistance: Float, tickDelta: Float) {
-        this.tripod.yaw = entity.getYaw(tickDelta) * DEGREES_TO_RADIANS;
+        val yaw = if (tickDelta == 1.0f) entity.yaw else MathHelper.lerp(tickDelta, entity.prevYaw, entity.yaw)
+        this.tripod.yaw = yaw * DEGREES_TO_RADIANS;
         this.holder.yaw = entity.getInterpolatedSpyglassYaw(tickDelta) * DEGREES_TO_RADIANS;
         this.spyglass.pitch = entity.getInterpolatedSpyglassPitch(tickDelta) * DEGREES_TO_RADIANS;
     }
