@@ -6,7 +6,8 @@
         "GameRendererMixin",
         "LightmapTextureManagerMixin",
         "MinecraftClientMixin",
-        "MouseMixin"
+        "MouseMixin",
+        "PlayerEntityMixin"
     ],
     "injectors": {
         "defaultRequire": 1

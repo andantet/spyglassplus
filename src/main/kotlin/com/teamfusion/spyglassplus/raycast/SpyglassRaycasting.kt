@@ -25,7 +25,7 @@ object SpyglassRaycasting {
         rotation: Vec2f = getRotation(camera),
         tickDelta: Float = 1.0f,
         distance: Double = MAX_RAYCAST_DISTANCE,
-        predicate: Predicate<Entity?> = Predicate { entity: Entity? -> true }
+        predicate: Predicate<Entity?> = Predicate { true }
     ): Entity? {
         // calculate a position vector from the camera's rotation
         var d = distance
@@ -148,5 +148,5 @@ object SpyglassRaycasting {
             : */Vec2f(camera.yaw, camera.pitch)
     }
 
-    private const val MAX_RAYCAST_DISTANCE: Double = 64.0
+    const val MAX_RAYCAST_DISTANCE: Double = 64.0
 }
